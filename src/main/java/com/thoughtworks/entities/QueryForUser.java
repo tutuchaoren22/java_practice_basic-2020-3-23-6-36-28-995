@@ -11,10 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class QueryForUser {
-    public static User queryForUser(String sql, Object... args) {
+    public static List<User> queryForUser(String sql, Object... args) {
         Connection conn = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
+        List<User> users = new ArrayList<>();
         try {
             conn = JDBCUtils.getConnection();
             preparedStatement = conn.prepareStatement(sql);
@@ -24,8 +25,8 @@ public class QueryForUser {
             resultSet = preparedStatement.executeQuery();
             ResultSetMetaData resultSetMetaData = resultSet.getMetaData();
             int count = resultSetMetaData.getColumnCount();
-            User user = new User();
-            if(resultSet.next()) {
+            while (resultSet.next()) {
+                User user = new User();
                 for (int i = 0; i < count; i++) {
                     Object value = resultSet.getObject(i + 1);
                     String columnName = resultSetMetaData.getColumnName(i + 1);
@@ -33,13 +34,14 @@ public class QueryForUser {
                     field.setAccessible(true);
                     field.set(user, value);
                 }
+                users.add(user);
             }
-            return user;
+            return users;
         } catch (Exception e) {
             e.printStackTrace();
+            return users;
         } finally {
             JDBCUtils.closeResource(conn, preparedStatement, resultSet);
         }
-        return null;
     }
 }

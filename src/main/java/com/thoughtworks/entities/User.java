@@ -12,6 +12,12 @@ public class User {
     public User() {
     }
 
+    public User( String name, String telephoneNumber, String email, String password) {
+        this.name = name;
+        this.telephoneNumber = telephoneNumber;
+        this.email = email;
+        this.password = password;
+    }
     public User(int id, String name, String telephoneNumber, String email, String password, int errorNumber, boolean isLocked) {
         this.id = id;
         this.name = name;
